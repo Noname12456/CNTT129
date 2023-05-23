@@ -48,6 +48,7 @@ namespace CNTT129.Models
         public string IDBUOI { get; set; }
         public string LOAI_BUOI { get; set; }
         public string HINH_THUC { get; set; }
+        public string LOAI_HT { get; set; }
 
         public string save(string tieude, string noidung, string ngaybatdaudk, string ngayketthudk, int khoa, int idhk, int songuoi, int diem, string ghichu, int loai, string hinhanh, string nguoitao, string ngaytao, string dia_diem)
         {
@@ -570,7 +571,7 @@ namespace CNTT129.Models
         {
             List<HOATDONG> listHD = new List<HOATDONG>();
             SqlConnection con = new SqlConnection(conf);
-            SqlCommand cmd = new SqlCommand("select HOATDONG.MAHD,HOATDONG.TIEUDE,HOATDONGTHEONGAY.NGAYBATDAUDIEMDANH,HOATDONGTHEONGAY.LOAI_BUOI,DANGKY.GHICHU,N'Không tham gia' as 'hinh_thuc',HOATDONG.DIEMRL from DANGKY inner join HOATDONGTHEONGAY on HOATDONGTHEONGAY.IDBUOI = DANGKY.IDBUOI inner join HOATDONG on HOATDONG.IDHD = HOATDONGTHEONGAY.IDHD where DANGKY.TRANGTHAI = 3 and IDSV = " + IDSV + " and HOATDONG.ID_HK = " + idhk + " and HOATDONGTHEONGAY.trangthai = 8 union all select HOATDONG.MAHD,HOATDONG.TIEUDE,HOATDONGTHEONGAY.NGAYBATDAUDIEMDANH,HOATDONGTHEONGAY.LOAI_BUOI,DIEMDANH.GHICHU,N'Tham gia' as 'hinh_thuc',HOATDONG.DIEMRL from DIEMDANH inner join HOATDONGTHEONGAY on HOATDONGTHEONGAY.IDBUOI = DIEMDANH.IDBUOI inner join HOATDONG on HOATDONG.IDHD = HOATDONGTHEONGAY.IDHD where IDSV = " + IDSV + " and HOATDONG.ID_HK = " + idhk + " and HOATDONGTHEONGAY.TrangThai = 8  and HOATDONGTHEONGAY.disabled = 0 union all select HOATDONG.MAHD,HOATDONG.TIEUDE,HOATDONGTHEONGAY.NGAYBATDAUDIEMDANH,HOATDONGTHEONGAY.LOAI_BUOI,PHAN_HOI.NOIDUNG as 'GHICHU',N'Phản hồi hoạt động' as 'hinh_thuc',HOATDONG.DIEMRL from PHAN_HOI inner join HOATDONGTHEONGAY on HOATDONGTHEONGAY.IDBUOI = PHAN_HOI.IDBUOI inner join HOATDONG on HOATDONG.IDHD = HOATDONGTHEONGAY.IDHD where IDSV = " + IDSV + " and HOATDONG.ID_HK = " + idhk + " and PHAN_HOI.TRANGTHAI = 1 and HOATDONGTHEONGAY.trangthai = 8  and HOATDONGTHEONGAY.disabled = 0", con);
+            SqlCommand cmd = new SqlCommand("select HOATDONG.MAHD,HOATDONG.TIEUDE,HOATDONGTHEONGAY.NGAYBATDAUDIEMDANH,HOATDONGTHEONGAY.LOAI_BUOI,DANGKY.GHICHU,N'Không tham gia' as 'hinh_thuc',HOATDONG.DIEMRL, 1 as 'loai_ht' from DANGKY inner join HOATDONGTHEONGAY on HOATDONGTHEONGAY.IDBUOI = DANGKY.IDBUOI inner join HOATDONG on HOATDONG.IDHD = HOATDONGTHEONGAY.IDHD where DANGKY.TRANGTHAI = 3 and IDSV = " + IDSV + " and HOATDONG.ID_HK = " + idhk + " and HOATDONGTHEONGAY.trangthai = 8 union all select HOATDONG.MAHD,HOATDONG.TIEUDE,HOATDONGTHEONGAY.NGAYBATDAUDIEMDANH,HOATDONGTHEONGAY.LOAI_BUOI,DIEMDANH.GHICHU,N'Tham gia' as 'hinh_thuc',HOATDONG.DIEMRL, 0 as 'loai_ht' from DIEMDANH inner join HOATDONGTHEONGAY on HOATDONGTHEONGAY.IDBUOI = DIEMDANH.IDBUOI inner join HOATDONG on HOATDONG.IDHD = HOATDONGTHEONGAY.IDHD where IDSV = " + IDSV + " and HOATDONG.ID_HK = " + idhk + " and HOATDONGTHEONGAY.TrangThai = 8  and HOATDONGTHEONGAY.disabled = 0 union all select HOATDONG.MAHD,HOATDONG.TIEUDE,HOATDONGTHEONGAY.NGAYBATDAUDIEMDANH,HOATDONGTHEONGAY.LOAI_BUOI,PHAN_HOI.NOIDUNG as 'GHICHU',N'Phản hồi hoạt động' as 'hinh_thuc',HOATDONG.DIEMRL, 1 as 'loai_ht' from PHAN_HOI inner join HOATDONGTHEONGAY on HOATDONGTHEONGAY.IDBUOI = PHAN_HOI.IDBUOI inner join HOATDONG on HOATDONG.IDHD = HOATDONGTHEONGAY.IDHD where IDSV = " + IDSV + " and HOATDONG.ID_HK = " + idhk + " and PHAN_HOI.TRANGTHAI = 1 and HOATDONGTHEONGAY.trangthai = 8  and HOATDONGTHEONGAY.disabled = 0", con);
             cmd.CommandType = CommandType.Text;
             con.Open();
             SqlDataReader dr = cmd.ExecuteReader();
@@ -584,6 +585,7 @@ namespace CNTT129.Models
                 emp.GHICHU = dr.GetValue(4).ToString();
                 emp.HINH_THUC = dr.GetValue(5).ToString();
                 emp.DIEMRL = dr.GetValue(6).ToString();
+                emp.LOAI_HT = dr.GetValue(7).ToString();
                 listHD.Add(emp);
             }
             con.Close();

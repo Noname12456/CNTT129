@@ -10,6 +10,9 @@
     VI_PHAM vi_pham = new VI_PHAM();
     HOATDONG hoat_dong = new HOATDONG();
     HOATDONGNGOAI hoat_dong_ngoai = new HOATDONGNGOAI();
+
+    KHOA khoa = new KHOA();
+    var menu_khoa = khoa.find("", "", "0");
 }
 <body class="preloading">
     <!-- Hiệu ứng load -->
@@ -40,9 +43,20 @@
             <div class="col-md-2">
                 <input class="form-control" id="end_date" name="end_date" placeholder="" value="@ViewBag.end_date" />
             </div>
-            <div class="col-md-2">
-
+            <div class="col-md-1">
+                Đơn vị
             </div>
+            @*<div class="col-md-2">
+                <select class="form-control" id="khoa" name="khoa">
+                    <option value="0" @{var selected_khoa = ""; if (ViewBag.selected_khoa == "") { selected_khoa = "selected = 'selected'"; }} @selected_khoa>Tất cả</option>
+                    @{
+                        foreach (var item in menu_khoa)
+                        {
+                            <option value="@item.ID_KHOA" @{selected_khoa = ""; if (ViewBag.selected_khoa == item.ID_KHOA) { selected_khoa = "selected = 'selected'"; }} @selected_khoa>@item.TEN_KHOA</option>
+                        }
+                    }
+                </select>
+            </div*@>
             <div class="col-2">
                 <button type="button" class="btn btn-info" onclick="saveFn2()">Chốt kết theo đợt</button>
             </div>
@@ -222,6 +236,7 @@
     function saveFn2() {
         var start_date = $('#start_date').val().split("/");
         var end_date = $('#end_date').val().split("/");
+
         var datebd = new Date(start_date[2] + '/' + start_date[1] + '/' + start_date[0]);
         var datekt = new Date(end_date[2] + '/' + end_date[1] + '/' + end_date[0]);
 
@@ -244,7 +259,8 @@
 
         var data = [{
             start_date: start_date[2] + '/' + start_date[1] + '/' + start_date[0],
-            end_date: end_date[2] + '/' + end_date[1] + '/' + end_date[0]
+            end_date: end_date[2] + '/' + end_date[1] + '/' + end_date[0],
+            //id_khoa: 
         }];
         var title = "Xác nhận chốt điểm rèn luyện từ ngày "+ $("#start_date").val() + " đến ngày "+  $('#end_date').val();
         var message = "";

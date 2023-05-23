@@ -30,6 +30,7 @@ namespace CNTT129.Models
         public string TENNQ { get; set; }
         public string DIEM { get; set; }
         public string HINH_THUC { get; set; }
+        public string LOAI_HT { get; set; }
         public int save(string tieude, string noidung, string nguoitao, string ngaytao, string id_noi_quy, string idsv, string idhk)
         {
             int dr = 0;
@@ -195,7 +196,7 @@ namespace CNTT129.Models
         {
             List<VI_PHAM> listHD = new List<VI_PHAM>();
             SqlConnection con = new SqlConnection(conf);
-            SqlCommand cmd = new SqlCommand("select VI_PHAM.MA_VI_PHAM,NOI_QUY.TEN_NOI_QUY,VI_PHAM.NGAYTAO,VI_PHAM.NOIDUNG,N'Vi phạm nội quy' as 'hinh_thuc',NOI_QUY.DIEM from VI_PHAM INNER JOIN NOI_QUY on NOI_QUY.ID_NOI_QUY = VI_PHAM.ID_NOI_QUY where IDSV = " + IDSV + " and VI_PHAM.IDHK = " + idhk + " and VI_PHAM.TRANGTHAI = 4 UNION ALL select VI_PHAM.MA_VI_PHAM,NOI_QUY.TEN_NOI_QUY,VI_PHAM.NGAYTAO,PHAN_HOI.NOIDUNG,N'Phản hồi vi phạm nội quy' as 'hinh_thuc',NOI_QUY.DIEM from VI_PHAM  INNER JOIN NOI_QUY on NOI_QUY.ID_NOI_QUY = VI_PHAM.ID_NOI_QUY INNER JOIN PHAN_HOI on PHAN_HOI.ID_VI_PHAM = VI_PHAM.ID_VI_PHAM where PHAN_HOI.IDSV = " + IDSV + " and VI_PHAM.IDHK = " + idhk + " and VI_PHAM.TRANGTHAI = 4 ", con);
+            SqlCommand cmd = new SqlCommand("select VI_PHAM.MA_VI_PHAM,NOI_QUY.TEN_NOI_QUY,VI_PHAM.NGAYTAO,VI_PHAM.NOIDUNG,N'Vi phạm nội quy' as 'hinh_thuc',NOI_QUY.DIEM,1 as 'loai_ht' from VI_PHAM INNER JOIN NOI_QUY on NOI_QUY.ID_NOI_QUY = VI_PHAM.ID_NOI_QUY where IDSV = " + IDSV + " and VI_PHAM.IDHK = " + idhk + " and VI_PHAM.TRANGTHAI = 4 UNION ALL select VI_PHAM.MA_VI_PHAM,NOI_QUY.TEN_NOI_QUY,VI_PHAM.NGAYTAO,PHAN_HOI.NOIDUNG,N'Phản hồi vi phạm nội quy' as 'hinh_thuc',NOI_QUY.DIEM,1 as 'loai_ht' from VI_PHAM  INNER JOIN NOI_QUY on NOI_QUY.ID_NOI_QUY = VI_PHAM.ID_NOI_QUY INNER JOIN PHAN_HOI on PHAN_HOI.ID_VI_PHAM = VI_PHAM.ID_VI_PHAM where PHAN_HOI.IDSV = " + IDSV + " and VI_PHAM.IDHK = " + idhk + " and VI_PHAM.TRANGTHAI = 4 ", con);
             cmd.CommandType = CommandType.Text;
             con.Open();
             SqlDataReader dr = cmd.ExecuteReader();
@@ -208,6 +209,7 @@ namespace CNTT129.Models
                 emp.NOIDUNG = dr.GetValue(3).ToString();
                 emp.HINH_THUC = dr.GetValue(4).ToString();
                 emp.DIEM = dr.GetValue(5).ToString();
+                emp.LOAI_HT = dr.GetValue(6).ToString();
                 listHD.Add(emp);
             }
             con.Close();

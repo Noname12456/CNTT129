@@ -66,7 +66,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="w-100 text-center">
-                                <h2>FORM ĐIỂM DANH</h2>
+                                <h2>FORM XÁC NHẬN ĐIỂM DANH</h2>
                             </div>
                             <h6 style="text-transform:uppercase">@ViewBag.ma_hd - @ViewBag.tieu_de - Ngày @ViewBag.ngay_bd_hd</h6>
                             <fieldset class="filter-report-info">
@@ -91,9 +91,14 @@
                                     </span><br />
                                     <span>Địa điểm: </span><span style="font-weight:800">@ViewBag.dia_diem</span><br />
                                     <span>Yêu cầu: </span><span style="font-weight:800">@ViewBag.ghi_chu</span><br />
-                                    <span>Thời gian:</span><br />
+                                    <span>Thời gian:
+                                    @{
+            DateTime dateNow = DateTime.Now;
+                                    }
+                                    @dateNow.ToString("dd/MM/yyyy HH:ss:mm");
+                                    </span><br />
                                     <div style="margin-left:10px;font-weight:800">
-                                        @{
+                                        @*@{
             foreach (var item in listDate)
             {
                 DateTime ngay_dd = DateTime.Parse(item.NGAYDIEMDANH);
@@ -115,20 +120,20 @@
                     <span>Cả ngày- @datedd</span><br />
                 }
             }
-                                        }
+                                        }*@
                                     </div>
                                 </div>
                             </fieldset>
-                            <fieldset class="filter-report-info">
+                            <fieldset class="filter-report-info" style="display: none">
                                 <legend class="legend-info">Thông tin điểm danh:</legend>
                                 <div style="margin-left:10px;margin-bottom:10px">
                                     @{
             foreach (var item in listSv)
             {
-                <div class="w-100 mt-1">
-                    <label>Mã sinh viên</label><br />
-                    <span style="font-weight:800" id="masv">@item.MASV</span><br />
-                </div>
+                        <div class="w-100 mt-1">
+                            <label>Mã sinh viên</label><br />
+                            <span style="font-weight:800" id="masv">@item.MASV</span><br />
+                        </div>
                                         <div class="w-100 mt-1">
                                             <label>Họ và tên</label><br />
                                             <span style="font-weight:800" id="tensv">@item.TENSV</span><br />
@@ -251,98 +256,101 @@
     }
 }
 <script type="text/javascript">
-    function save(idsv, idbuoi) {
-        $('#dialog-err').text('');
-        var email = $("#email").val();
-        if ($("#email").val() == "" || $("#sdt").val() == "") {
-            email = $("#emailsv").text();
-        }
-        var sdt = $("#sdt").val();
-        if ($("#sdt").val() == "" || $("#sdt").val() == "") {
-            sdt = $("#sdtsv").text();
-        }
-        if ($("#email").val() != "") {
-            if (checkEmail(email) == false) {
-                $('#dialog-err').text("Email sai định dạng");
-                return;
+    $(document).ready(function () {
+        save(@Session["id_sv"],""+@ViewBag.idbuoi+"");
+        function save(idsv, idbuoi) {
+            $('#dialog-err').text('');
+            var email = $("#email").val();
+            if ($("#email").val() == "" || $("#sdt").val() == "") {
+                email = $("#emailsv").text();
             }
-        }
-        if ($("#sdt").val() != "") {
-            if (is_phonenumber($("#sdt").val()) == false) {
-                $('#dialog-err').text("Sai số điện thoại");
-                return;
+            var sdt = $("#sdt").val();
+            if ($("#sdt").val() == "" || $("#sdt").val() == "") {
+                sdt = $("#sdtsv").text();
             }
-        }
-        var dataList = {idbuoi: idbuoi}
-        $.ajax({
-            url: '/SinhVien/KiemTraTrangThaiForm',
-            data: { cartModel: JSON.stringify(dataList) },
-            dataType: 'json',
-            type: 'POST',
-            success: function (res) {
-                if (res.data.Trang_Thai == 2) {
-                    var dataList2 = [];
-                    var dateTao = new Date();
-                    var data = {
-                        id_buoi: idbuoi,
-                        idsv: idsv.toString(),
-                        MASV: $("#masv").text(),
-                        email: email,
-                        loi_nhan: $("#loi_nhan").val(),
-                        SDT: sdt,
-                        NGAYDANGKY: dateTao.getFullYear() + '/' + (dateTao.getMonth() + 1) + '/' + dateTao.getDate(),
-                    }
-                    dataList2.push(data);
-
-                    $.ajax({
-                        url: '/SinhVien/saveDiemDanh',
-                        data: { cartModel: JSON.stringify(dataList2) },
-                        dataType: 'json',
-                        type: 'POST',
-                        success: function (res) {
-                            location.reload();
-                        }
-                    })
-                } else if (res.data.Trang_Thai == 4 || res.data.Trang_Thai == 0) {
-                    if (res.data != null) {
-                        $("#email").val($("#email").val());
-                        $("#sdt").val($("#sdt").val());
-                        $("#loi_nhan").val($("#loi_nhan").val());
-                        var dialog = bootbox.dialog({
-                            title: "Thông báo",
-                            message: 'Form hoạt động chưa mở',
-                            buttons: {
-                                cancel: {
-                                    label: "Bỏ qua",
-                                    className: 'btn-default input-sm',
-                                    callback: function () {
-                                        location.reload();
-                                    }
-                                }
-                            }
-                        });
-                    }
-                } else {
-                    if (res.data != null) {
-                        $("#email").val($("#email").val());
-                        $("#sdt").val($("#sdt").val());
-                        $("#loi_nhan").val($("#loi_nhan").val());
-                        var dialog = bootbox.dialog({
-                            title: "Thông báo",
-                            message: 'Form hoạt động đã hủy',
-                            buttons: {
-                                cancel: {
-                                    label: "Bỏ qua",
-                                    className: 'btn-default input-sm',
-                                    callback: function () {
-                                        location.reload();
-                                    }
-                                }
-                            }
-                        });
-                    }
+            if ($("#email").val() != "") {
+                if (checkEmail(email) == false) {
+                    $('#dialog-err').text("Email sai định dạng");
+                    return;
                 }
             }
-        })
-    }
+            if ($("#sdt").val() != "") {
+                if (is_phonenumber($("#sdt").val()) == false) {
+                    $('#dialog-err').text("Sai số điện thoại");
+                    return;
+                }
+            }
+            var dataList = {idbuoi: idbuoi}
+            $.ajax({
+                url: '/SinhVien/KiemTraTrangThaiForm',
+                data: { cartModel: JSON.stringify(dataList) },
+                dataType: 'json',
+                type: 'POST',
+                success: function (res) {
+                    if (res.data.Trang_Thai == 2) {
+                        var dataList2 = [];
+                        var dateTao = new Date();
+                        var data = {
+                            id_buoi: idbuoi,
+                            idsv: idsv.toString(),
+                            MASV: $("#masv").text(),
+                            email: email,
+                            loi_nhan: $("#loi_nhan").val(),
+                            SDT: sdt,
+                            NGAYDANGKY: dateTao.getFullYear() + '/' + (dateTao.getMonth() + 1) + '/' + dateTao.getDate(),
+                        }
+                        dataList2.push(data);
+
+                        $.ajax({
+                            url: '/SinhVien/saveDiemDanh',
+                            data: { cartModel: JSON.stringify(dataList2) },
+                            dataType: 'json',
+                            type: 'POST',
+                            success: function (res) {
+                                //location.reload();
+                            }
+                        })
+                    } else if (res.data.Trang_Thai == 4 || res.data.Trang_Thai == 0) {
+                        if (res.data != null) {
+                            $("#email").val($("#email").val());
+                            $("#sdt").val($("#sdt").val());
+                            $("#loi_nhan").val($("#loi_nhan").val());
+                            var dialog = bootbox.dialog({
+                                title: "Thông báo",
+                                message: 'Form hoạt động chưa mở',
+                                buttons: {
+                                    cancel: {
+                                        label: "Bỏ qua",
+                                        className: 'btn-default input-sm',
+                                        callback: function () {
+                                            //location.reload();
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        if (res.data != null) {
+                            $("#email").val($("#email").val());
+                            $("#sdt").val($("#sdt").val());
+                            $("#loi_nhan").val($("#loi_nhan").val());
+                            var dialog = bootbox.dialog({
+                                title: "Thông báo",
+                                message: 'Form hoạt động đã hủy',
+                                buttons: {
+                                    cancel: {
+                                        label: "Bỏ qua",
+                                        className: 'btn-default input-sm',
+                                        callback: function () {
+                                            //location.reload();
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            })
+        }
+    });
 </script>

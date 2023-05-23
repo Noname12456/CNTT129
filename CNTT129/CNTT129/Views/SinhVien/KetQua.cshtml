@@ -67,7 +67,19 @@
                                 </td>
                                 <td>@item_detail.HINH_THUC</td>
                                 <td>@item_detail.GHICHU</td>
-                                <td class="text-right">@item_detail.DIEMRL</td>
+                                <td class="text-right">
+                                    @{
+                            if (item_detail.LOAI_HT == "1")
+                            {
+                                <span>- @item_detail.DIEMRL</span>
+                            }
+                            if (item_detail.LOAI_HT == "0")
+                            {
+                                <span>+ @item_detail.DIEMRL</span>
+                            }
+}
+                                
+                                </td>
                             </tr>
                             i++;
                         }
@@ -85,7 +97,17 @@
                                 <td>@datedd</td>
                                 <td>@item_detail.HINH_THUC</td>
                                 <td>@item_detail.NOIDUNG</td>
-                                <td class="text-right">@item_detail.DIEM</td>
+                                <td class="text-right">
+                                @{
+                            if (item_detail.LOAI_HT == "1")
+                            {
+                                <span>- @item_detail.DIEM</span>
+                            }
+                            if (item_detail.LOAI_HT == "0")
+                            {
+                                <span>+ @item_detail.DIEM</span>
+                            }
+                                }</td>
                             </tr>
                             j++;
                         }
@@ -103,7 +125,7 @@
                                 <td>@datedd</td>
                                 <td>@item_detail.HINH_THUC</td>
                                 <td>@item_detail.NOIDUNG</td>
-                                <td class="text-right">@item_detail.DIEM</td>
+                                <td class="text-right">+ @item_detail.DIEM</td>
                             </tr>
                             k++;
                         }

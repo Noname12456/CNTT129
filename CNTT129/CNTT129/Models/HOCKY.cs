@@ -113,13 +113,13 @@ namespace CNTT129.Models
             con.Close();
 
             con.Open();
-            SqlCommand cmd8 = new SqlCommand("update phan_hoi set TRANGTHAI = 4 where IDHK = " + idhk + "and trangthai = 0", con);// Đã chốt
+            SqlCommand cmd8 = new SqlCommand("update phan_hoi set TRANGTHAI = 4 where IDHK = " + idhk + "and trangthai = 1", con);// Đã chốt
             cmd8.CommandType = CommandType.Text;
             dr = cmd8.ExecuteNonQuery();
             con.Close();
 
             con.Open();
-            SqlCommand cmd9 = new SqlCommand("update vi_pham set TRANGTHAI = 4 where IDHK = " + idhk + "and trangthai = 0", con);// Đã chốt
+            SqlCommand cmd9 = new SqlCommand("update vi_pham set TRANGTHAI = 4 where IDHK = " + idhk + "and trangthai = 1", con);// Đã chốt
             cmd9.CommandType = CommandType.Text;
             dr = cmd9.ExecuteNonQuery();
             con.Close();
@@ -131,7 +131,7 @@ namespace CNTT129.Models
             con.Close();
 
             con.Open();
-            SqlCommand cmd13 = new SqlCommand("update HOATDONGNGOAI set HOATDONGNGOAI.TRANGTHAI = 4 where HOATDONGNGOAI.ID_HK = " + idhk + " and HOATDONGNGOAI.trangthai = 0 ", con);// Đã chốt
+            SqlCommand cmd13 = new SqlCommand("update HOATDONGNGOAI set HOATDONGNGOAI.TRANGTHAI = 4 where HOATDONGNGOAI.ID_HK = " + idhk + " and HOATDONGNGOAI.trangthai = 1 ", con);// Đã chốt
             cmd13.CommandType = CommandType.Text;
             dr = cmd13.ExecuteNonQuery();
             con.Close();
@@ -221,13 +221,13 @@ namespace CNTT129.Models
             con.Close();
 
             con.Open();
-            SqlCommand cmd8 = new SqlCommand("update phan_hoi set TRANGTHAI = 4 where IDHK = " + idhk + "and trangthai = 0 " + sql3, con);// Đã chốt
+            SqlCommand cmd8 = new SqlCommand("update phan_hoi set TRANGTHAI = 4 where IDHK = " + idhk + "and trangthai = 1" + sql3, con);// Đã chốt
             cmd8.CommandType = CommandType.Text;
             dr = cmd8.ExecuteNonQuery();
             con.Close();
 
             con.Open();
-            SqlCommand cmd9 = new SqlCommand("update vi_pham set TRANGTHAI = 4 where IDHK = " + idhk + "and trangthai = 0" + sql2, con);// Đã chốt
+            SqlCommand cmd9 = new SqlCommand("update vi_pham set TRANGTHAI = 4 where IDHK = " + idhk + "and trangthai = 1" + sql2, con);// Đã chốt
             cmd9.CommandType = CommandType.Text;
             dr = cmd9.ExecuteNonQuery();
             con.Close();
@@ -239,7 +239,7 @@ namespace CNTT129.Models
             con.Close();
 
             con.Open();
-            SqlCommand cmd11 = new SqlCommand("update HOATDONGNGOAI set HOATDONGNGOAI.TRANGTHAI = 4 where HOATDONGNGOAI.ID_HK = " + idhk + " and HOATDONGNGOAI.trangthai = 0 " + sql4, con);// Đã chốt
+            SqlCommand cmd11 = new SqlCommand("update HOATDONGNGOAI set HOATDONGNGOAI.TRANGTHAI = 4 where HOATDONGNGOAI.ID_HK = " + idhk + " and HOATDONGNGOAI.trangthai = 1 " + sql4, con);// Đã chốt
             cmd11.CommandType = CommandType.Text;
             dr = cmd11.ExecuteNonQuery();
             con.Close();

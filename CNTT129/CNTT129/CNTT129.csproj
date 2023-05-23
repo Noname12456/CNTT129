@@ -303,6 +303,7 @@
     <Content Include="Views\Admin\LoaiHdNgoai.cshtml" />
     <Content Include="Views\Admin\HOATDONGNGOAI.cshtml" />
     <Content Include="Views\SinhVien\HOATDONGNGOAI.cshtml" />
+    <Content Include="Views\SinhVien\Logins.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

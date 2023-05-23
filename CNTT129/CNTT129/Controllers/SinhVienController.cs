@@ -25,6 +25,43 @@ namespace CNTT129.Controllers
             return View();
         }
 
+        public ActionResult Logins(string idbuoi)
+        {
+            Session["Ten_sv"] = "";
+            Session["ma_sv"] = "";
+            Session["id_sv"] = "";
+            Session["logsv"] = false;
+            ViewBag.Buoi = idbuoi;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Logins(string login, string username, string password, string buoi)
+        {
+            if (!string.IsNullOrEmpty(login))
+            {
+                SINHVIEN sv = new SINHVIEN();
+                var kq = sv.login(username, password);
+                if (kq.Count == 0)
+                {
+                    ViewBag.TB = "Tài Khoản bạn khóa hoặc sai mật mật khẩu! Vui lòng liên hệ admin để đc giải quyết";
+                    return RedirectToAction("Logins", "SinhVien", new { idbuoi = buoi });
+                }
+                else
+                {
+                    foreach (var item in kq)
+                    {
+                        Session["Ten_sv"] = item.TENSV;
+                        Session["ma_sv"] = item.MASV;
+                        Session["id_sv"] = item.ID_SV;
+                    }
+                    Session["logsv"] = true;
+                    return RedirectToAction("DiemDanhHoatDong", "SinhVien", new { idbuoi = buoi });
+                }
+            }
+            return View();
+        }
+
         public ActionResult Home()
         {
             if ((Boolean)Session["logsv"] == false)
@@ -36,7 +73,7 @@ namespace CNTT129.Controllers
             list_dang_ky = dang_ky.danhSachHDDK(Session["id_sv"].ToString(), "");
             ViewData["list_dang_ky"] = list_dang_ky;
             List<DANGKY> list_dang_ky_huy = new List<DANGKY>();
-            list_dang_ky_huy = dang_ky.danhSachHDHuy(Session["id_sv"].ToString(), "","2,3,4,5");
+            list_dang_ky_huy = dang_ky.danhSachHDHuy(Session["id_sv"].ToString(), "", "2,3,4,5");
             ViewData["list_ds_hd_huy"] = list_dang_ky_huy;
             return View();
         }
@@ -118,7 +155,7 @@ namespace CNTT129.Controllers
         {
             if ((Boolean)Session["logsv"] == false)
             {
-                return RedirectToAction("Login", "SinhVien");
+                return RedirectToAction("Logins", "SinhVien",new { idbuoi = idbuoi});
             }
             HOATDONG hk = new HOATDONG();
             var data = hk.findByBuoiID(idbuoi.ToString());
@@ -168,7 +205,7 @@ namespace CNTT129.Controllers
             {
                 ViewData["data_list"] = hd.findByIDBuoi2(item["id_buoi"]);
             }
-           
+
             return Json(new
             {
                 data = ViewData["data_list"],
@@ -188,9 +225,9 @@ namespace CNTT129.Controllers
                 }
                 else
                 {
-                    dk.capnhat(item["id_buoi"], item["idsv"],"0");
+                    dk.capnhat(item["id_buoi"], item["idsv"], "0");
                 }
-                
+
             }
             return Json(new
             {
@@ -203,7 +240,7 @@ namespace CNTT129.Controllers
             var jsonCart = new JavaScriptSerializer().Deserialize<dynamic>(cartModel);
             HoatDongBuoi hdb = new HoatDongBuoi();
             var id_buoi = jsonCart["idbuoi"];
-            var data = hdb.findByIDBuoi(id_buoi);    
+            var data = hdb.findByIDBuoi(id_buoi);
             return Json(new
             {
                 data = data[0],
@@ -218,7 +255,7 @@ namespace CNTT129.Controllers
             DANGKY dk = new DANGKY();
             if (diemdanh.ktraAll(jsonCart[0]["idsv"], jsonCart[0]["id_buoi"]) == 0)
             {
-                diemdanh.save(jsonCart[0]["id_buoi"], jsonCart[0]["idsv"], jsonCart[0]["MASV"], jsonCart[0]["SDT"], jsonCart[0]["email"], jsonCart[0]["loi_nhan"], jsonCart[0]["NGAYDANGKY"]);
+                diemdanh.save(""+jsonCart[0]["id_buoi"]+"", ""+jsonCart[0]["idsv"]+"", jsonCart[0]["MASV"], jsonCart[0]["SDT"], jsonCart[0]["email"], jsonCart[0]["loi_nhan"], jsonCart[0]["NGAYDANGKY"]);
             }
             else
             {
@@ -245,7 +282,7 @@ namespace CNTT129.Controllers
         {
             DANGKY dang_ky = new DANGKY();
             List<DANGKY> list_dang_ky_huy = new List<DANGKY>();
-            list_dang_ky_huy = dang_ky.danhSachHDHuy(id_sv, id_hk,"2,3");
+            list_dang_ky_huy = dang_ky.danhSachHDHuy(id_sv, id_hk, "2,3");
             ViewData["list_ds_hd_huy"] = list_dang_ky_huy;
             return PartialView("list_ds_hd_huy", ViewData["list_ds_hd_huy"]);
         }
@@ -263,7 +300,7 @@ namespace CNTT129.Controllers
             list_dang_ky = dang_ky.danhSachHDDK(Session["id_sv"].ToString(), "");
             ViewData["list_dang_ky"] = list_dang_ky;
             List<DANGKY> list_dang_ky_huy = new List<DANGKY>();
-            list_dang_ky_huy = dang_ky.danhSachHDHuy(Session["id_sv"].ToString(), "","2,5");
+            list_dang_ky_huy = dang_ky.danhSachHDHuy(Session["id_sv"].ToString(), "", "2,5");
             ViewData["list_ds_hd_huy"] = list_dang_ky_huy;
             List<DANGKY> list_khong_tham_gia = new List<DANGKY>();
             list_khong_tham_gia = dang_ky.danhSachHDHuy(Session["id_sv"].ToString(), "", "3");
@@ -308,7 +345,7 @@ namespace CNTT129.Controllers
         }
 
         [HttpPost]
-        public PartialViewResult huyHDSV(string id_hk, string id_sv,string iddk)
+        public PartialViewResult huyHDSV(string id_hk, string id_sv, string iddk)
         {
             DANGKY dang_ky = new DANGKY();
             DIEMDANH diem_danh = new DIEMDANH();
@@ -459,7 +496,7 @@ namespace CNTT129.Controllers
             }
             PHAN_HOI hk = new PHAN_HOI();
             DateTime now = DateTime.Now;
-            ViewData["list_phan_hoi"] = hk.find("", "", now.Year + "/" + now.Month + "/" + now.Day, now.Year + "/" + now.Month + "/" + now.Day,"", Session["id_sv"].ToString());
+            ViewData["list_phan_hoi"] = hk.find("", "", now.Year + "/" + now.Month + "/" + now.Day, now.Year + "/" + now.Month + "/" + now.Day, "", Session["id_sv"].ToString());
             ViewBag.start_date = now.Day + "/" + now.Month + "/" + now.Year;
             ViewBag.end_date = now.Day + "/" + now.Month + "/" + now.Year;
             return View();
@@ -490,7 +527,7 @@ namespace CNTT129.Controllers
 
             string id = jsonCart[0]["ID"];
 
-            int reslut = phan_hoi.updateTT(id,"3");
+            int reslut = phan_hoi.updateTT(id, "3");
 
             return Json(new
             {
@@ -526,7 +563,7 @@ namespace CNTT129.Controllers
             DateTime now = DateTime.Now;
             ViewBag.start_date = now.Day + "/" + now.Month + "/" + now.Year;
             ViewBag.end_date = now.Day + "/" + now.Month + "/" + now.Year;
-            ViewData["data"] = hk.find("",Session["id_sv"].ToString(), "", now.Year + "/" + now.Month + "/" + now.Day, now.Year + "/" + now.Month + "/" + now.Day, "0", "", "0");
+            ViewData["data"] = hk.find("", Session["id_sv"].ToString(), "", now.Year + "/" + now.Month + "/" + now.Day, now.Year + "/" + now.Month + "/" + now.Day, "0", "", "0");
             return View();
         }
 
@@ -538,7 +575,7 @@ namespace CNTT129.Controllers
                 HOATDONGNGOAI hk = new HOATDONGNGOAI();
                 var dateBd = start_date.Split('/');
                 var datekt = end_date.Split('/');
-                ViewData["data"] = hk.find(ma_hd,Session["id_sv"].ToString(), trang_thai, dateBd[2] + '/' + dateBd[1] + '/' + dateBd[0], datekt[2] + '/' + datekt[1] + '/' + datekt[0], hocky, loai, lhdn);
+                ViewData["data"] = hk.find(ma_hd, Session["id_sv"].ToString(), trang_thai, dateBd[2] + '/' + dateBd[1] + '/' + dateBd[0], datekt[2] + '/' + datekt[1] + '/' + datekt[0], hocky, loai, lhdn);
                 ViewBag.ma_hd = ma_hd;
                 ViewBag.selected = trang_thai;
                 ViewBag.selected_hocky = hocky;
