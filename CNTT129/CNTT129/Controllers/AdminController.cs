@@ -1119,7 +1119,7 @@ namespace CNTT129.Controllers
             HOATDONG hoat_dong = new HOATDONG();
             ViewData["data_hoat_dong"] = hoat_dong.findByIdHk(idhk);
             NOI_QUY noi_quy = new NOI_QUY();
-            ViewData["data_noi_quy"] = noi_quy.find("","","0");
+            ViewData["data_noi_quy"] = noi_quy.find("", "", "0");
             ViewBag.idhk = idhk;
             ViewBag.tenhk = tenhk;
             return View();
@@ -1130,7 +1130,7 @@ namespace CNTT129.Controllers
             HOCKY hocky = new HOCKY();
             SV_CHUCVU sv_cv = new SV_CHUCVU();
             var menu_hocky = hocky.find();
-            
+
             var idhk = "";
             var diemmd = "";
             foreach (var item in menu_hocky)
@@ -1170,7 +1170,7 @@ namespace CNTT129.Controllers
             DANGKY dang_ky = new DANGKY();
             foreach (var item in jsonCart)
             {
-                dang_ky.khongChoSinhVienThamGia(item,"5"); // 5 trạng thái k cho sinh viên tham gia
+                dang_ky.khongChoSinhVienThamGia(item, "5"); // 5 trạng thái k cho sinh viên tham gia
             }
 
             return Json(new
@@ -1249,6 +1249,15 @@ namespace CNTT129.Controllers
             return View();
         }
 
+        public ActionResult BaoCaoKetQua()
+        {
+            if ((Boolean)Session["log_gv"] == false)
+            {
+                return RedirectToAction("Login", "Admin");
+            }
+            return View();
+        }
+
         public JsonResult saveSvVaoVt(string cartModel)
         {
             var jsonCart = new JavaScriptSerializer().Deserialize<dynamic>(cartModel);
@@ -1257,7 +1266,7 @@ namespace CNTT129.Controllers
             {
                 svvt.save(item, jsonCart[0]["id_vt"]);
             }
-           
+
             return Json(new
             {
                 res = true,
@@ -1382,11 +1391,11 @@ namespace CNTT129.Controllers
                 res = hdn.findByID(id),
             });
         }
-         public JsonResult saveHdNgoai2(string cartModel)
+        public JsonResult saveHdNgoai2(string cartModel)
         {
             var jsonCart = new JavaScriptSerializer().Deserialize<dynamic>(cartModel);
             HOATDONGNGOAI hdn = new HOATDONGNGOAI();
-             HOCKY hocky = new HOCKY();
+            HOCKY hocky = new HOCKY();
             var menu_hocky = hocky.find();
             var idhk = "";
             foreach (var item in menu_hocky)
@@ -1399,63 +1408,89 @@ namespace CNTT129.Controllers
             });
         }
 
-         public JsonResult updateHdNgoaiTT(string cartModel)
-         {
-             var jsonCart = new JavaScriptSerializer().Deserialize<dynamic>(cartModel);
-             HOATDONGNGOAI hdn = new HOATDONGNGOAI();
-             return Json(new
-             {
-                 res = hdn.updateTT(jsonCart[0]["ID"], jsonCart[0]["trangthai"]),
-             });
-         }
-         public JsonResult ktraSlSvChuaXl(string cartModel)
-         {
-             var jsonCart = new JavaScriptSerializer().Deserialize<dynamic>(cartModel);
-             DANGKY dang_ky = new DANGKY();
-             DIEMDANH diem_danh = new DIEMDANH();
-             PHAN_HOI phan_hoi = new PHAN_HOI();
-             VI_PHAM vi_pham = new VI_PHAM();
-             HOATDONG hoat_dong = new HOATDONG();
-             HOATDONGNGOAI hoat_dong_ngoai = new HOATDONGNGOAI();
-             HOATDONGNGOAI hdn = new HOATDONGNGOAI();
-             HOCKY hocky = new HOCKY();
-             var menu_hocky = hocky.find();
-             var idhk = "";
-             foreach (var item in menu_hocky)
-             {
-                 idhk = item.IDHK;
-             }
-             var demSlVP = vi_pham.demSL(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
-             var demSlPH = phan_hoi.demSL(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
-             var demSlHD = hoat_dong.demSL(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
-             var demslHDN = hoat_dong_ngoai.demSL(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
-             return Json(new
-             {
-                 res = new { demSlVP = demSlVP, demSlPH = demSlPH, demSlHD = demSlHD, demslHDN = demslHDN },
-             });
-         }
+        public JsonResult updateHdNgoaiTT(string cartModel)
+        {
+            var jsonCart = new JavaScriptSerializer().Deserialize<dynamic>(cartModel);
+            HOATDONGNGOAI hdn = new HOATDONGNGOAI();
+            return Json(new
+            {
+                res = hdn.updateTT(jsonCart[0]["ID"], jsonCart[0]["trangthai"]),
+            });
+        }
+        public JsonResult ktraSlSvChuaXl(string cartModel)
+        {
+            var jsonCart = new JavaScriptSerializer().Deserialize<dynamic>(cartModel);
+            DANGKY dang_ky = new DANGKY();
+            DIEMDANH diem_danh = new DIEMDANH();
+            PHAN_HOI phan_hoi = new PHAN_HOI();
+            VI_PHAM vi_pham = new VI_PHAM();
+            HOATDONG hoat_dong = new HOATDONG();
+            HOATDONGNGOAI hoat_dong_ngoai = new HOATDONGNGOAI();
+            HOATDONGNGOAI hdn = new HOATDONGNGOAI();
+            HOCKY hocky = new HOCKY();
+            var menu_hocky = hocky.find();
+            var idhk = "";
+            foreach (var item in menu_hocky)
+            {
+                idhk = item.IDHK;
+            }
+            var demSlVP = vi_pham.demSL(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
+            var demSlPH = phan_hoi.demSL(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
+            var demSlHD = hoat_dong.demSL(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
+            var demslHDN = hoat_dong_ngoai.demSL(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
+            return Json(new
+            {
+                res = new { demSlVP = demSlVP, demSlPH = demSlPH, demSlHD = demSlHD, demslHDN = demslHDN },
+            });
+        }
 
-         public JsonResult updateDiemDot(string cartModel)
-         {
-             var jsonCart = new JavaScriptSerializer().Deserialize<dynamic>(cartModel);
-             HOCKY hocky = new HOCKY();
-             SV_CHUCVU sv_cv = new SV_CHUCVU();
-             var menu_hocky = hocky.find();
-             
-             var idhk = "";
-             foreach (var item in menu_hocky)
-             {
-                 idhk = item.IDHK;
-             }
-             //sv_cv.updateDiem(idhk);
-             int reslut = hocky.updateDiem2(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
+        public JsonResult updateDiemDot(string cartModel)
+        {
+            var jsonCart = new JavaScriptSerializer().Deserialize<dynamic>(cartModel);
+            HOCKY hocky = new HOCKY();
+            SV_CHUCVU sv_cv = new SV_CHUCVU();
+            var menu_hocky = hocky.find();
 
-             return Json(new
-             {
-                 res = reslut,
-             });
-         }
-        
+            var idhk = "";
+            foreach (var item in menu_hocky)
+            {
+                idhk = item.IDHK;
+            }
+            //sv_cv.updateDiem(idhk);
+            int reslut = hocky.updateDiem2(idhk, jsonCart[0]["start_date"], jsonCart[0]["end_date"]);
+
+            return Json(new
+            {
+                res = reslut,
+            });
+        }
+
+
+        [HttpPost]
+        public PartialViewResult ChangeKhoa(string khoa)
+        {
+            HOATDONG hoat_dong = new HOATDONG();
+            LOP lop = new LOP();
+            var view = "";
+
+            ViewData["data_list"] = lop.getDSLop(khoa);
+            view = "tb_khoa";
+            return PartialView(view);
+        }
+
+        [HttpPost]
+        public PartialViewResult findReport(string khoa, string lop, string hoc_ky)
+        {
+            KETQUA kq_qua = new KETQUA();
+            var view = "";
+
+            ViewData["data_list_sv"] = kq_qua.findReport(khoa, lop, hoc_ky);
+            view = "tb_list_sv";
+            return PartialView(view);
+        }
+
+
+
     }
 
 }

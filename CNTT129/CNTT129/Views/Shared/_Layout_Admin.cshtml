@@ -178,6 +178,7 @@
                                     <div class="sidebar-submenu">
                                         <ul>
                                             <li class=""><a href="/Admin/ChotKetQua">CHỐT ĐIỂM</a></li>
+                                            <li class=""><a href="/Admin/BaoCaoKetQua">THỐNG KÊ KẾT QUẢ</a></li>
                                         </ul>
                                     </div>
                                 </li>
@@ -267,6 +268,52 @@
                 $(".page-wrapper").addClass("toggled");
             });
         });
+        function printDiv(divName, attrs) {
+            var printContents = document.querySelector(divName).outerHTML;
+
+            printContent(printContents, attrs);
+        }
+
+        function printContent(con, attrs, isClose) {
+            var docHead = '';
+
+            docHead = document.head.outerHTML;
+
+            var winAttr = "location=yes, statusbar=no, menubar=no, titlebar=no, toolbar=no,dependent=no, width=765, height=500, resizable=yes, screenX=200, screenY=200, personalbar=no, scrollbars=yes";
+            var newWin = window.open("", "_blank", winAttr);
+            var beforePrint = function () {
+                //alert('Functionality to run before printing.');
+            };
+            var afterPrint = function () {
+                if(isClose){ // <print-template id="print_template" isclose="1"
+
+                    // 'Functionality to run after printing'
+                    newWin.close();
+                }
+            };
+            try{
+                if (newWin.matchMedia) {
+                    var mediaQueryList = newWin.matchMedia('print');
+                    mediaQueryList.addListener(function (mql) {
+                        if (mql.matches) {
+                            beforePrint();
+                        } else {
+                            afterPrint();
+                        }
+                    });
+                }
+                newWin.onbeforeprint = beforePrint;
+                newWin.onafterprint = afterPrint;
+            }catch(e){
+                AppDebug.log(e);
+            }
+
+            var writeDoc = newWin.document;
+            writeDoc.open();
+            writeDoc.write('<!doctype html><html>' + docHead + '<body onLoad="window.print()" style="background-color: white;">' + con + '</body></html>');
+            writeDoc.close();
+            newWin.focus();
+        }
     </script>
 </body>
 </html>

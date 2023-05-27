@@ -37,5 +37,26 @@ namespace CNTT129.Models
             con.Close();
             return listHK;
         }
+
+        public List<LOP> getDSLop(String khoa)
+        {
+
+            List<LOP> listHK = new List<LOP>();
+            SqlConnection con = new SqlConnection(conf);
+            SqlCommand cmd = new SqlCommand("select LOP.* from LOP where disabled = 0 and ID_KHOA = " + khoa, con);
+            cmd.CommandType = CommandType.Text;
+            con.Open();
+            SqlDataReader dr = cmd.ExecuteReader();
+            while (dr.Read())
+            {
+                LOP emp = new LOP();
+                emp.ID_LOP = dr.GetValue(0).ToString();
+                emp.CODE_LOP = dr.GetValue(1).ToString();
+                emp.TEN_LOP = dr.GetValue(2).ToString();
+                listHK.Add(emp);
+            }
+            con.Close();
+            return listHK;
+        }
     }
 }
