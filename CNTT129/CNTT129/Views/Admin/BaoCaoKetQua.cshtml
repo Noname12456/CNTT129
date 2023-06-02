@@ -43,7 +43,7 @@
                         <div class="col-md-1 col-lg-1 col-xl-1 col-sm-1">
                             <label>Học kỳ</label><br />
                         </div>
-                        <div class="col-md-2 col-lg-2 col-xl-2 col-sm-2">
+                        <div class="col-md-1 col-lg-1 col-xl-1 col-sm-1">
                             <select class="form-select" style="height:35px;width:100%" id="hoc_ky">
                                 @{
                                     <option value="0" @{var selected_hk = ""; if (ViewBag.selected_hocky == "") { selected_hk = "selected = 'selected'"; }} @selected_hk>Tất cả</option>
@@ -60,6 +60,9 @@
                         <div class="col-md-1 col-lg-1 col-xl-1 col-sm-1">
                             <button type="button" class="btn btn-success" onclick="printFn()">In</button>
                         </div>
+                        <div class="col-md-1 col-lg-1 col-xl-1 col-sm-1">
+                            <button type="button" class="btn btn-success" onclick="exportF()">Xuất execl</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,7 +75,7 @@
                     <span id="span_hk"></span><br />
                 </div>
                 <div class="mt-2">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" id="table">
                         <thead>
                             <tr>
                                 <td>STT</td>
@@ -85,9 +88,7 @@
                                 <td>Xếp loại</td>
                             </tr>
                         </thead>
-                        <tbody id="tb_list_sv">
-                            
-                        </tbody>
+                        <tbody id="tb_list_sv"></tbody>
                     </table>
                 </div>
             </div>
@@ -147,5 +148,33 @@
     }
     function printFn() {
         printDiv("#list_sv");
+    }
+
+    function exportF() {
+        var htmls = "";
+        var uri = 'data:application/vnd.ms-excel;base64,';
+        var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>';
+        var base64 = function (s) {
+            return window.btoa(unescape(encodeURIComponent(s)))
+        };
+
+        var format = function (s, c) {
+            return s.replace(/{(\w+)}/g, function (m, p) {
+                return c[p];
+            })
+        };
+
+        var table = document.getElementById("table");
+        html = table.outerHTML;
+        var ctx = {
+            worksheet: 'Worksheet',
+            table: html
+        }
+
+
+        var link = document.createElement("a");
+        link.download = "export.xls";
+        link.href = uri + base64(format(template, ctx));
+        link.click();
     }
 </script>
